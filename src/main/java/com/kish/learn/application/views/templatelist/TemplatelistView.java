@@ -1,7 +1,7 @@
 package com.kish.learn.application.views.templatelist;
 
-import com.kish.learn.application.data.SamplePerson;
-import com.kish.learn.application.services.SamplePersonService;
+import com.kish.learn.application.business.template.landingpage.TemplatePageService;
+import com.kish.learn.application.business.template.landingpage.model.TemplateLandingPage;
 import com.kish.learn.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
@@ -11,6 +11,7 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
@@ -26,34 +27,35 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
-@PageTitle("template-list")
+import java.util.ArrayList;
+import java.util.List;
+
+@PageTitle("Template List")
 @Route(value = "", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @Uses(Icon.class)
 public class TemplatelistView extends Div {
 
-    private Grid<SamplePerson> grid;
+    private Grid<TemplateLandingPage> grid;
 
     private Filters filters;
-    private final SamplePersonService samplePersonService;
 
-    public TemplatelistView(SamplePersonService SamplePersonService) {
-        this.samplePersonService = SamplePersonService;
+    private final TemplatePageService templatePageService;
+
+    public TemplatelistView(TemplatePageService templatePageService) {
+        this.templatePageService = templatePageService;
         setSizeFull();
         addClassNames("templatelist-view");
-
+        Details filterDetails = new Details("Filter");
+        filterDetails.setWidthFull();
         filters = new Filters(() -> refreshGrid());
-        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
+        filterDetails.add(filters);
+        filterDetails.setOpened(false);
+        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filterDetails, createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
@@ -84,7 +86,7 @@ public class TemplatelistView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SamplePerson> {
+    public static class Filters extends Div implements Specification<TemplateLandingPage> {
 
         private final TextField name = new TextField("Name");
         private final TextField phone = new TextField("Phone");
@@ -146,7 +148,7 @@ public class TemplatelistView extends Div {
         }
 
         @Override
-        public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<TemplateLandingPage> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!name.isEmpty()) {
@@ -219,16 +221,16 @@ public class TemplatelistView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
+        grid = new Grid<>(TemplateLandingPage.class, false);
+        grid.addColumn(TemplateLandingPage::getTemplateId).setHeader("Template Id").setAutoWidth(true);
+        grid.addColumn(TemplateLandingPage::getTemplateName).setHeader("Template Name").setAutoWidth(true);
+        grid.addColumn(TemplateLandingPage::getTemplateType).setHeader("Template Type").setAutoWidth(true);
+        grid.addColumn(TemplateLandingPage::getRecipient).setHeader("Recipient").setAutoWidth(true);
+        grid.addColumn(TemplateLandingPage::getCreateBy).setHeader("Created By").setAutoWidth(true);
+        grid.addColumn(TemplateLandingPage::getCreatedDate).setHeader("Created On").setAutoWidth(true);
+        grid.addColumn(TemplateLandingPage::getNtAccntSk).setHeader("Accounts").setAutoWidth(true);
 
-        grid.setItems(query -> samplePersonService.list(
+        grid.setItems(query -> templatePageService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);

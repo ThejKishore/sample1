@@ -1,0 +1,26 @@
+{
+  "to": [
+    {
+      "coaSk": null,
+      "accntSk": 23232,
+      "srcType": 1,
+      "accntName": "test accnt2",
+      "accntDescription": "test account 2 for testing purpose "
+    },
+    {
+      "coaSk": null,
+      "accntSk": 32232,
+      "srcType": 1,
+      "accntName": "test accnt3",
+      "accntDescription": "test account 3 for testing purpose "
+    }
+  ],
+  "from": {
+    "bankDetails": "Boa Bank",
+    "recipientId": 12345,
+    "recipientName": "Thej",
+    "recipientEmail": "test@test.com"
+  },
+  "vendorName": "Vendor 1",
+  "vendorType": "Vendor 2"
+}

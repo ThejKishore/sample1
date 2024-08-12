@@ -1,0 +1,22 @@
+{
+  "to": [
+    {
+      "coaSk": null,
+      "accntSk": 23232,
+      "srcType": 1,
+      "accntName": "test accnt2",
+      "accntDescription": "test account 2 for testing purpose "
+    }
+  ],
+  "from": [
+    {
+      "coaSk": null,
+      "accntSk": 45343,
+      "srcType": 1,
+      "accntName": "test accnt1",
+      "accntDescription": "test account 1 for testing purpose "
+    }
+  ],
+  "vendorName": "Vendor 1",
+  "vendorType": "Vendor 2"
+}

@@ -51,7 +51,7 @@ public class MainLayout extends AppLayout {
     private SideNav createNavigation() {
         SideNav nav = new SideNav();
 
-        nav.addItem(new SideNavItem("template-list", TemplatelistView.class, LineAwesomeIcon.SEARCH_SOLID.create()));
+        nav.addItem(new SideNavItem("Template List", TemplatelistView.class, LineAwesomeIcon.SEARCH_SOLID.create()));
         nav.addItem(new SideNavItem("Template Form", TemplateFormView.class, LineAwesomeIcon.CREDIT_CARD.create()));
 
         return nav;

@@ -5,6 +5,7 @@
   "dependencies": {
     "@fontsource/roboto": "4.5.0",
     "@polymer/polymer": "3.5.1",
+    "@vaadin-component-factory/vcf-popup": "24.0.3",
     "@vaadin/bundles": "24.4.5",
     "@vaadin/common-frontend": "0.0.19",
     "@vaadin/polymer-legacy-adapter": "24.4.5",
@@ -48,6 +49,7 @@
     "dependencies": {
       "@fontsource/roboto": "4.5.0",
       "@polymer/polymer": "3.5.1",
+      "@vaadin-component-factory/vcf-popup": "24.0.3",
       "@vaadin/bundles": "24.4.5",
       "@vaadin/common-frontend": "0.0.19",
       "@vaadin/polymer-legacy-adapter": "24.4.5",
@@ -87,7 +89,7 @@
       "workbox-core": "7.1.0",
       "workbox-precaching": "7.1.0"
     },
-    "hash": "fe235acb28433f0d7dddb9e14aa43b9e8f78441617199e386b129155c3a6cd2f"
+    "hash": "0c6c42f9da743a98d910466b5063d35bb713d48f5cc38bfedd19d46cf52f8c12"
   },
   "overrides": {
     "@vaadin/bundles": "$@vaadin/bundles",
@@ -109,6 +111,7 @@
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
     "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
-    "@fontsource/roboto": "$@fontsource/roboto"
+    "@fontsource/roboto": "$@fontsource/roboto",
+    "@vaadin-component-factory/vcf-popup": "$@vaadin-component-factory/vcf-popup"
   }
 }

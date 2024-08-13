@@ -1,6 +1,12 @@
 package com.kish.learn.application.business.template.model;
 
-import lombok.Builder;
+import lombok.*;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder(toBuilder = true)
-public record NTAccount(Long accntSk ,String accntName , String accntDescription , int srcType , Long coaSk) {}
+public class NTAccount{
+    Long accntSk ;String accntName ; String accntDescription ; int srcType ; Long coaSk;
+}

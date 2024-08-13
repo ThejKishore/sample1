@@ -2,13 +2,12 @@ package com.kish.learn.application.views.templateform;
 
 import com.kish.learn.application.business.template.model.NTAccount;
 import com.kish.learn.application.business.template.model.NTAccountExtended;
+import com.kish.learn.application.views.component.SearchGrid;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 
@@ -45,20 +44,14 @@ public class NTAccountView extends Composite<VerticalLayout> {
         h3.setText(headerText);
         h3.setWidth("100%");
 
-        Select<NTAccount> select = new Select();
-        select.setWidth("100%");
-        select.setWidthFull();
-        select.setLabel("NT Accounts");
-        select.setItems(accountList);
-        select.setItemLabelGenerator(rec -> String.format(" %s  |  %s  |  %d ", rec.accntSk().toString(), rec.accntName(), rec.srcType()));
-
+        SearchGrid select1 = new SearchGrid("NT Accounts", "Search with account number or names");
         Grid basicGrid = new Grid<NTAccountExtended>();
         basicGrid.setWidth("100%");
         basicGrid.setWidthFull();
         setGridSampleData(basicGrid);
 
         layoutColumn2.add(h3);
-        layoutColumn2.add(select);
+        layoutColumn2.add(select1);
         layoutColumn2.add(basicGrid);
 
         getContent().add(layoutColumn2);

@@ -1,6 +1,8 @@
 package com.kish.learn.application;
 
 import com.kish.learn.application.business.template.TemplateWrapperRepository;
+import com.kish.learn.application.business.template.audit.AuditEntity;
+import com.kish.learn.application.business.template.audit.AuditRepo;
 import com.kish.learn.application.business.template.landingpage.TemplatePageRepository;
 import com.kish.learn.application.business.template.landingpage.model.TemplateLandingPage;
 import com.kish.learn.application.business.template.model.*;
@@ -15,6 +17,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -42,41 +46,42 @@ public class Application implements AppShellConfigurator {
 
     @Bean
     public CommandLineRunner commandLineRunner(TemplatePageRepository templatePageRepository,
-                                               TemplateWrapperRepository templateWrapperRepository) {
+                                               TemplateWrapperRepository templateWrapperRepository,
+                                               AuditRepo auditRepo) {
         return args -> {
-            createTemplateForTesting(templateWrapperRepository);
-            createLandingPageEntry(templatePageRepository);
+            createTemplateForTesting(templateWrapperRepository,auditRepo);
+            createLandingPageEntry(templatePageRepository,auditRepo);
         };
 
     }
 
-    private void createTemplateForTesting(TemplateWrapperRepository templateWrapperRepository) {
+    private void createTemplateForTesting(TemplateWrapperRepository templateWrapperRepository,AuditRepo auditRepo) {
         //Wire out
-        templateWrapperRepository.persist(TemplateWrapper.builder()
+        TemplateWrapper wireOut = TemplateWrapper.builder()
                 .createBy(CREATE_BY)
                 .updateBy(CREATE_BY)
                 .createdDate(LocalDate.now().minusDays(3))
                 .updatedDate(LocalDate.now())
                 .templateName("Test_Wire_Out")
                 .templateType(TemplateType.WIRE_OUT)
-                        .template(WireTemplate.builder()
-                                .vendorName("Vendor 1")
-                                .vendorType("Vendor 2")
-                                .from(List.of(
-                                        NTAccount.builder().accntSk(ACCNT_NO_1).accntName("test accnt1").srcType(1).accntDescription("test account 1 for testing purpose ").build(),
-                                        NTAccount.builder().accntSk(ACCNT_NO_2).accntName("test accnt2").srcType(1).accntDescription("test account 2 for testing purpose ").build(),
-                                        NTAccount.builder().accntSk(ACCNT_NO_3).accntName("test accnt3").srcType(1).accntDescription("test account 3 for testing purpose ").build()
-                                ))
-                                .to(WireRecipient.builder()
-                                        .bankDetails("Boa Bank")
-                                        .recipientId(12345l)
-                                        .recipientName("Thej")
-                                        .recipientEmail("test@test.com")
-                                        .build())
+                .template(WireTemplate.builder()
+                        .vendorName("Vendor 1")
+                        .vendorType("Vendor 2")
+                        .from(List.of(
+                                NTAccount.builder().accntSk(ACCNT_NO_1).accntName("test accnt1").srcType(1).accntDescription("test account 1 for testing purpose ").build(),
+                                NTAccount.builder().accntSk(ACCNT_NO_2).accntName("test accnt2").srcType(1).accntDescription("test account 2 for testing purpose ").build(),
+                                NTAccount.builder().accntSk(ACCNT_NO_3).accntName("test accnt3").srcType(1).accntDescription("test account 3 for testing purpose ").build()
+                        ))
+                        .to(WireRecipient.builder()
+                                .bankDetails("Boa Bank")
+                                .recipientId(12345l)
+                                .recipientName("Thej")
+                                .recipientEmail("test@test.com")
                                 .build())
-                .build());
+                        .build())
+                .build();
         //Transfer
-        templateWrapperRepository.persist(TemplateWrapper.builder()
+        TemplateWrapper transfer = TemplateWrapper.builder()
                 .createBy(CREATE_BY)
                 .updateBy(CREATE_BY)
                 .createdDate(LocalDate.now().minusDays(2))
@@ -93,9 +98,9 @@ public class Application implements AppShellConfigurator {
                                 NTAccount.builder().accntSk(ACCNT_NO_2).accntName("test accnt2").srcType(1).accntDescription("test account 2 for testing purpose ").build()
                         ))
                         .build())
-                .build());
+                .build();
         //ACH
-        templateWrapperRepository.persist(TemplateWrapper.builder()
+        TemplateWrapper ach = TemplateWrapper.builder()
                 .createBy(CREATE_BY)
                 .updateBy(CREATE_BY)
                 .createdDate(LocalDate.now().minusDays(3))
@@ -108,7 +113,7 @@ public class Application implements AppShellConfigurator {
                         .from(List.of(
                                 NTAccount.builder().accntSk(ACCNT_NO_1).accntName("test accnt1").srcType(1).accntDescription("test account 1 for testing purpose ").build(),
                                 NTAccount.builder().accntSk(ACCNT_NO_2).accntName("test accnt2").srcType(1).accntDescription("test account 2 for testing purpose ").build()
-                                ))
+                        ))
                         .to(AchRecipient.builder()
                                 .bankDetails("Boa Bank")
                                 .recipientId(12345l)
@@ -117,9 +122,9 @@ public class Application implements AppShellConfigurator {
                                 .build()
                         )
                         .build())
-                .build());
+                .build();
         //Wire IN
-        templateWrapperRepository.persist(TemplateWrapper.builder()
+        TemplateWrapper wireIn = TemplateWrapper.builder()
                 .createBy(CREATE_BY)
                 .updateBy(CREATE_BY)
                 .createdDate(LocalDate.now().minusDays(3))
@@ -141,11 +146,19 @@ public class Application implements AppShellConfigurator {
                                 NTAccount.builder().accntSk(ACCNT_NO_3).accntName("test accnt3").srcType(1).accntDescription("test account 3 for testing purpose ").build()
                         ))
                         .build())
-                .build());
+                .build();
+
+        List<TemplateWrapper> templates = List.of(wireOut,wireIn,ach,transfer);
+        templateWrapperRepository.persistAll(templates);
+        List<AuditEntity> templateWrapperAudits = templates.stream()
+                .map(wrap -> wrap.diffs(null, "template_wrapper", CREATE_BY))
+                .flatMap(Collection::stream)
+                .toList();
+        auditRepo.persistAll(templateWrapperAudits);
     }
 
-    private static void createLandingPageEntry(TemplatePageRepository templatePageRepository) {
-        templatePageRepository.persist(TemplateLandingPage.builder()
+    private static void createLandingPageEntry(TemplatePageRepository templatePageRepository,AuditRepo auditRepo) {
+        var rec1 = TemplateLandingPage.builder()
                 .sponsorCode("Test")
                 .recipient("BOA-Thej")
                 .createBy(CREATE_BY)
@@ -155,8 +168,8 @@ public class Application implements AppShellConfigurator {
                 .templateType(TemplateType.WIRE_OUT)
                 .templateName("Test_Wire_Out")
                 .ntAccntSk(List.of(ACCNT_NO_1, ACCNT_NO_2, ACCNT_NO_3))
-                .build());
-        templatePageRepository.persist(TemplateLandingPage.builder()
+                .build();
+        var rec2 = TemplateLandingPage.builder()
                 .sponsorCode("Test")
                 .recipient("BOA-Shanaya")
                 .createBy(CREATE_BY)
@@ -166,8 +179,8 @@ public class Application implements AppShellConfigurator {
                 .templateType(TemplateType.TRANSFER)
                 .templateName("Test_Transfer")
                 .ntAccntSk(List.of(ACCNT_NO_1, ACCNT_NO_2))
-                .build());
-        templatePageRepository.persist(TemplateLandingPage.builder()
+                .build();
+        var rec3 =TemplateLandingPage.builder()
                 .sponsorCode("Test")
                 .recipient("BOA-Abirami")
                 .createBy(CREATE_BY)
@@ -177,8 +190,8 @@ public class Application implements AppShellConfigurator {
                 .templateType(TemplateType.ACH)
                 .templateName("Test_ACH_BANKING")
                 .ntAccntSk(List.of(ACCNT_NO_1, ACCNT_NO_2))
-                .build());
-        templatePageRepository.persist(TemplateLandingPage.builder()
+                .build();
+        var rec4 = TemplateLandingPage.builder()
                 .sponsorCode("Test")
                 .recipient("BOA-Bharathi")
                 .createBy(CREATE_BY)
@@ -188,7 +201,17 @@ public class Application implements AppShellConfigurator {
                 .templateType(TemplateType.WIRE_IN)
                 .templateName("Test_Wire_IN")
                 .ntAccntSk(List.of(ACCNT_NO_2, ACCNT_NO_3))
-                .build());
+                .build();
+        List<TemplateLandingPage> records = List.of(rec1, rec2, rec3, rec4);
+        List<AuditEntity> createAudits = records.stream()
+                .map(d -> d.diffs(null,"template_landing_page",CREATE_BY))
+                .flatMap(Collection::stream)
+                .toList();
+
+        templatePageRepository.persistAll(records);
+        auditRepo.persistAll(createAudits);
+
+
         templatePageRepository.findAll().forEach(d -> log.info(" {} ",d));
     }
 

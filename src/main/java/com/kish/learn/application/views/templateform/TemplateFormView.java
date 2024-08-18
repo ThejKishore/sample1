@@ -22,6 +22,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 @Route(value = "template-form", layout = MainLayout.class)
 public class TemplateFormView extends VerticalLayout {
 
+
     public TemplateFormView() {
         addClassNames("template-form-view");
         add(createTemplateForm());

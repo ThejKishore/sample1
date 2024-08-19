@@ -5,6 +5,7 @@ import com.kish.learn.application.business.template.audit.AuditEntityHelper;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-
+@ToString
 public class NTAccount implements AuditEntityHelper<NTAccount> {
 
     @EqualsAndHashCode.Include
@@ -29,6 +30,8 @@ public class NTAccount implements AuditEntityHelper<NTAccount> {
     int srcType ;
 
     Long coaSk;
+
+    BigDecimal percentage;
 
     @Override
     public List<AuditEntity> diffs(NTAccount value, String tableName, String modifiedBy) {

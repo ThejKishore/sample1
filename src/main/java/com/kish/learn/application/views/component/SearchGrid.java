@@ -1,13 +1,13 @@
 package com.kish.learn.application.views.component;
 
 import com.kish.learn.application.business.template.model.NTAccount;
-import com.kish.learn.application.business.template.model.NTAccountExtended;
 import com.vaadin.componentfactory.Popup;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.Autocomplete;
 import com.vaadin.flow.component.textfield.TextField;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,16 +16,23 @@ import java.util.List;
 public class SearchGrid extends Composite<Div> {
 
     List<NTAccount> accountList = new ArrayList(List.of(
-            NTAccount.builder().accntSk(23432l).srcType(1).accntName("Test1").accntDescription(" accnt type custody").build(),
-            NTAccount.builder().accntSk(12343l).srcType(1).accntName("Test2").accntDescription(" accnt type banking").build(),
-            NTAccount.builder().accntSk(92328l).srcType(1).accntName("Test3").accntDescription(" accnt type custody").build()
+            NTAccount.builder().accntSk(45343l).srcType(1).accntName("Test1").accntDescription(" accnt type custody").build(),
+            NTAccount.builder().accntSk(23232l).srcType(1).accntName("Test2").accntDescription(" accnt type banking").build(),
+            NTAccount.builder().accntSk(32232l).srcType(1).accntName("Test3").accntDescription(" accnt type custody").build()
     ));
 
 
     Popup popup = new Popup();
     Grid<NTAccount> basicGrid = new Grid(NTAccount.class, false);
-    final Grid<NTAccountExtended> displayGrid;
-    public SearchGrid(String label , String placeholder, List<NTAccountExtended> selectedAccounts,Grid<NTAccountExtended> displayGrid ) {
+    final Grid<NTAccount> displayGrid;
+
+
+    @Getter
+    List<NTAccount> selectedAccounts;
+
+
+    public SearchGrid(String label , String placeholder, List<NTAccount> selectedAccounts, Grid<NTAccount> displayGrid ) {
+        this.selectedAccounts = selectedAccounts;
         this.displayGrid = displayGrid;
         TextField search = new TextField();
         search.setAutocomplete(Autocomplete.OFF);
@@ -61,10 +68,10 @@ public class SearchGrid extends Composite<Div> {
         basicGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         basicGrid.addSelectionListener(event -> {
             if(event.getFirstSelectedItem().isPresent() &&
-                    !selectedAccounts.stream().map(NTAccountExtended::getAccntSk).toList().contains(event.getFirstSelectedItem().get().getAccntSk())) {
-                List<NTAccountExtended> selectAccnts = event.getAllSelectedItems().stream().map(this::from).toList();
-                selectedAccounts.addAll(selectAccnts);
-                this.displayGrid.setItems(selectedAccounts);
+                    !getSelectedAccounts().stream().map(NTAccount::getAccntSk).toList().contains(event.getFirstSelectedItem().get().getAccntSk())) {
+                List<NTAccount> selectAccnts = event.getAllSelectedItems().stream().map(this::from).toList();
+                getSelectedAccounts().addAll(selectAccnts);
+                this.displayGrid.setItems(getSelectedAccounts());
                 this.displayGrid.getDataProvider().refreshAll();
             }
             popup.hide();
@@ -73,14 +80,13 @@ public class SearchGrid extends Composite<Div> {
 
     }
 
-    private NTAccountExtended from(NTAccount ntAccount){
-        return   NTAccountExtended.builder()
+    private NTAccount from(NTAccount ntAccount){
+        return ntAccount.toBuilder()
                 .coaSk(ntAccount.getCoaSk())
-                .accntName(ntAccount.getAccntName())
-                .accntDescription(ntAccount.getAccntDescription())
-                .srcType(ntAccount.getSrcType())
-                .accntSk(ntAccount.getAccntSk())
                 .percentage(BigDecimal.ZERO)
                 .build();
     }
+
+
 }
+

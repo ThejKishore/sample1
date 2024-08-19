@@ -111,7 +111,7 @@
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
     "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
-    "@fontsource/roboto": "$@fontsource/roboto",
-    "@vaadin-component-factory/vcf-popup": "$@vaadin-component-factory/vcf-popup"
+    "@vaadin-component-factory/vcf-popup": "$@vaadin-component-factory/vcf-popup",
+    "@fontsource/roboto": "$@fontsource/roboto"
   }
 }

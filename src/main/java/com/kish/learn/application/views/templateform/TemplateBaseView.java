@@ -1,6 +1,7 @@
 package com.kish.learn.application.views.templateform;
 
 import com.kish.learn.application.business.template.model.TemplateType;
+import com.kish.learn.application.business.template.model.TemplateWrapper;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
@@ -9,14 +10,18 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateBaseView extends Composite<VerticalLayout> {
 
-    public TemplateBaseView() {
+
+
+    public TemplateBaseView(Binder<TemplateWrapper> templateWrapperBinder) {
         VerticalLayout layoutColumn2 = new VerticalLayout();
         layoutColumn2.setWidthFull();
         getContent().setFlexGrow(1.0, layoutColumn2);
@@ -56,6 +61,10 @@ public class TemplateBaseView extends Composite<VerticalLayout> {
         layoutColumn2.add(templateNameTF);
         layoutColumn2.add(templateTypeSelect);
         layoutColumn2.add(layoutRow);
+
+        templateWrapperBinder.forField(templateNameTF).asRequired().bind(TemplateWrapper::getTemplateName , TemplateWrapper::setTemplateName);
+        templateWrapperBinder.forField(templateTypeSelect).asRequired().bind(TemplateWrapper::getTemplateType , TemplateWrapper::setTemplateType);
+
     }
 
 }

@@ -1,22 +1,24 @@
 package com.kish.learn.application.business.template.model;
 
 import com.kish.learn.application.business.template.audit.AuditEntity;
-import com.kish.learn.application.business.template.audit.AuditEntityHelper;
-import lombok.Builder;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
-public record AchTemplate(
-        String vendorName,
-        String vendorType,
-        List<NTAccount> from,
-        AchRecipient to
-)
-        implements Template, AuditEntityHelper<Template> {
+public final class AchTemplate extends Template{
+    String vendorName;
+    String vendorType;
+    List<NTAccount> from;
+    AchRecipient to;
 
     @Override
     public List<AuditEntity> diffs(Template value, String tableName, String modifiedBy) {

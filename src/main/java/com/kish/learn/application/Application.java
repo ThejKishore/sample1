@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class Application implements AppShellConfigurator {
                                 NTAccount.builder().accntSk(ACCNT_NO_3).accntName("test accnt3").srcType(1).accntDescription("test account 3 for testing purpose ").build()
                         ))
                         .to(WireRecipient.builder()
-                                .bankDetails("Boa Bank")
+                                .bankName("Boa Bank")
                                 .recipientId(12345l)
                                 .recipientName("Thej")
                                 .recipientEmail("test@test.com")
@@ -115,7 +114,7 @@ public class Application implements AppShellConfigurator {
                                 NTAccount.builder().accntSk(ACCNT_NO_2).accntName("test accnt2").srcType(1).accntDescription("test account 2 for testing purpose ").build()
                         ))
                         .to(AchRecipient.builder()
-                                .bankDetails("Boa Bank")
+                                .bankName("Boa Bank")
                                 .recipientId(12345l)
                                 .recipientName("Thej")
                                 .recipientEmail("test@test.com")
@@ -135,7 +134,7 @@ public class Application implements AppShellConfigurator {
                         .vendorName("Vendor 1")
                         .vendorType("Vendor 2")
                         .from(WireRecipient.builder()
-                                .bankDetails("Boa Bank")
+                                .bankName("Boa Bank")
                                 .recipientId(12345l)
                                 .recipientName("Thej")
                                 .recipientEmail("test@test.com")

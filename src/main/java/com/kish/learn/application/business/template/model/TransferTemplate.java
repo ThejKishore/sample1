@@ -1,8 +1,7 @@
 package com.kish.learn.application.business.template.model;
 
 import com.kish.learn.application.business.template.audit.AuditEntity;
-import com.kish.learn.application.business.template.audit.AuditEntityHelper;
-import lombok.Builder;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
@@ -10,14 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
-public record TransferTemplate(
-        String vendorName,
-        String vendorType,
-        List<NTAccount> from,
-        List<NTAccount> to
-)
-        implements Template, AuditEntityHelper<Template> {
+public final class TransferTemplate extends Template {
+    String vendorName;
+    String vendorType;
+    List<NTAccount> from;
+    List<NTAccount> to;
 
     @Override
     public List<AuditEntity> diffs(Template value, String tableName, String modifiedBy) {
